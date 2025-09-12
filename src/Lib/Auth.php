@@ -54,7 +54,10 @@ class Auth
 
   public static function logout(): void
   {
-    unset($_SESSION["user"], $_SESSION["user_roles"]);
+    $_SESSION = [];
+    if (session_status() === PHP_SESSION_ACTIVE) {
+      session_destroy();
+    }
   }
 
   public static function isLoggedIn(): bool
