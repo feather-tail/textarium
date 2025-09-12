@@ -28,23 +28,34 @@ class Csrf
     $validToken = isset($_SESSION["csrf_token"]) && hash_equals($_SESSION["csrf_token"], $token);
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-      $host = $_SERVER["HTTP_HOST"] ?? "";
+     $hostHeader = $_SERVER["HTTP_HOST"] ?? "";
       $origin = $_SERVER["HTTP_ORIGIN"] ?? "";
       $scheme =
         $_SERVER["REQUEST_SCHEME"] ??
         (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off" ? "https" : "http");
       $referer = $_SERVER["HTTP_REFERER"] ?? "";
 
+            [$hostName, $hostPort] = array_pad(explode(":", $hostHeader, 2), 2, null);
+      $hostPort = $hostPort !== null ? (int) $hostPort : (int) ($_SERVER["SERVER_PORT"] ?? ($scheme === "https" ? 443 : 80));
+
       $isSameOrigin = false;
 
       if ($origin) {
+        $originHost = parse_url($origin, PHP_URL_HOST);
+        $originScheme = parse_url($origin, PHP_URL_SCHEME);
+        $originPort = parse_url($origin, PHP_URL_PORT);
+        $originPort ??= ($originScheme === "https" ? 443 : 80);
+
         $isSameOrigin =
-          parse_url($origin, PHP_URL_HOST) === $host &&
-          parse_url($origin, PHP_URL_SCHEME) === $scheme;
+          $originHost === $hostName &&
+          (int) $originPort === (int) $hostPort &&
+          $originScheme === $scheme;
       } elseif ($referer) {
         $isSameOrigin =
-          parse_url($referer, PHP_URL_HOST) === $host &&
-          parse_url($referer, PHP_URL_SCHEME) === $scheme;
+        $refHost = parse_url($referer, PHP_URL_HOST);
+        $refScheme = parse_url($referer, PHP_URL_SCHEME);
+        $refPort = parse_url($referer, PHP_URL_PORT);
+        $refPort ??= ($refScheme === "https" ? 443 : 80);
       } else {
         error_log("[CSRF] Отсутствует Origin и Referer для POST-запроса");
         return false;
