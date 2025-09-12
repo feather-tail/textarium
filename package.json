@@ -1,0 +1,25 @@
+{
+  "name": "textarium",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feather-tail/textarium.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/feather-tail/textarium/issues"
+  },
+  "homepage": "https://github.com/feather-tail/textarium#readme",
+  "devDependencies": {
+    "@prettier/plugin-php": "^0.24.0",
+    "prettier": "^3.6.2"
+  }
+}
