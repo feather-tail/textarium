@@ -1,0 +1,28 @@
+# Composer
+/vendor/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# Runtime data
+/storage/cache/
+/storage/logs/
+/storage/sessions/
+/storage/tmp/
+/storage/uploads/
+
+# PHPUnit & coverage
+.phpunit.result.cache
+coverage/
+.clover
+junit.xml
+
+# IDE / OS
+/.idea/
+/vscode/
+/.vscode/
+*.iml
+.DS_Store
+Thumbs.db

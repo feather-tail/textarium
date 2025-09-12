@@ -1,0 +1,264 @@
+#editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 6px 0;
+  flex-direction: row;
+  align-items: flex-start;
+  border-bottom: 1px solid #ddd;
+  justify-content: center;
+}
+
+.bb-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bb-group:last-child {
+  border-right: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.bb-btn {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 15px;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 34px;
+}
+
+.bb-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.bb-btn i {
+  pointer-events: none;
+  font-size: 15px;
+}
+
+.bb-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.bb-modal.hidden {
+  display: none;
+}
+
+.bb-modal-content {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px #0005;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.bb-modal-content input {
+  width: 90%;
+  margin: 10px 0;
+  padding: 8px;
+  font-size: 15px;
+}
+
+.bb-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.bb-modal-actions button {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.color-palette .color-choice {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #0006;
+}
+
+.color-palette .color-choice:hover {
+  border-color: #333;
+}
+
+.bb-modal-content .hidden {
+  display: none;
+}
+
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(4, 24px);
+  grid-auto-rows: 24px;
+  gap: 8px;
+  margin: 15px 0;
+  justify-content: center;
+}
+
+.color-palette .color-btn {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 2px #0005;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+}
+
+.color-palette .color-btn:hover {
+  border-color: var(--clr-primary);
+}
+
+.color-palette .color-choice {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #0005;
+}
+
+.color-palette .color-choice:hover {
+  border-color: #333;
+}
+
+#bbcode-modal-select {
+  padding: 6px;
+  font-size: 15px;
+  width: 90%;
+  margin: 10px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.align-options {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.bb-align-option {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.bb-align-option:hover {
+  background: #e2e2e2;
+}
+
+.bb-table-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.bb-table-modal.hidden {
+  display: none;
+}
+
+.bb-table-modal .table-modal-content {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+#table-grid-preview {
+  display: grid;
+  grid-template-columns: repeat(10, 20px);
+  grid-template-rows: repeat(10, 20px);
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+#table-grid-preview div {
+  width: 20px;
+  height: 20px;
+  background: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+#table-grid-preview div.active {
+  background: #4285f4;
+}
+
+#table-size-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  user-select: none;
+  margin-bottom: 10px;
+  display: inline-block;
+  text-align: center;
+}
+
+.decoda-spoiler-button {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.decoda-spoiler-button i {
+  font-size: 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
