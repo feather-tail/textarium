@@ -143,8 +143,3 @@ logs/
 /data/*
 !/data/.gitkeep
 
-# ---- Misc project-specific ----
-# Lockfiles are often repo policy-dependent. Uncomment one if you keep a single manager:
-# !package-lock.json
-# !yarn.lock
-# !pnpm-lock.yaml
