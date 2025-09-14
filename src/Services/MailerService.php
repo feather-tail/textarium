@@ -24,15 +24,6 @@ class MailerService
       $mail->Timeout = 10;
       $mail->SMTPKeepAlive = false;
 
-      if (!$mail->smtpConnect()) {
-        file_put_contents(
-          __DIR__ . "/../../debug.log",
-          "[EMAIL ERROR] SMTP connect failed" . "\n",
-          FILE_APPEND,
-        );
-        return false;
-      }
-
       $mail->setFrom($_ENV["MAIL_USER"], "Библиотека");
       $mail->addReplyTo($_ENV["MAIL_USER"], "Библиотека");
       $mail->addAddress($to);
@@ -45,6 +36,7 @@ class MailerService
           "[EMAIL ERROR] Invalid APP_DOMAIN value" . "\n",
           FILE_APPEND,
         );
+        $mail->smtpClose();
         return false;
       }
       $verifyLink = sprintf("https://%s/verify?token=%s", $sanitizedHost, urlencode($token));
@@ -59,7 +51,10 @@ class MailerService
                 <small>Если вы не регистрировались, проигнорируйте это письмо.</small>
             ";
 
-      if (!$mail->send()) {
+      $result = $mail->send();
+      $mail->smtpClose();
+
+      if (!$result) {
         file_put_contents(
           __DIR__ . "/../../debug.log",
           "[EMAIL ERROR] send() returned false: " . $mail->ErrorInfo . "\n",
@@ -75,6 +70,7 @@ class MailerService
         "[EMAIL EXCEPTION] " . $e->getMessage() . "\n",
         FILE_APPEND,
       );
+      $mail->smtpClose();
       error_log("[Email Error] " . $e->getMessage());
       return false;
     }

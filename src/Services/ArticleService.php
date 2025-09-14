@@ -40,12 +40,15 @@ class ArticleService
     return array_values(array_unique($ids));
   }
 
-  public function create(array $data): array
+  /**
+   * Validate article data
+   *
+   * @param array $data
+   * @return array<string>
+   */
+  private function validate(array $data): array
   {
     $errors = [];
-
-    $data["categories"] = $this->normalizeIds($data["categories"] ?? []);
-    $data["tags"] = $this->normalizeIds($data["tags"] ?? []);
 
     if (empty($data["title"]) || empty($data["content"]) || empty($data["author_id"])) {
       $errors[] = "Все поля обязательны";
@@ -58,6 +61,15 @@ class ArticleService
     if (empty($data["tags"])) {
       $errors[] = "Нужно выбрать хотя бы один тэг";
     }
+
+    return $errors;
+  }
+
+  public function create(array $data): array
+  {
+    $data["categories"] = $this->normalizeIds($data["categories"] ?? []);
+    $data["tags"] = $this->normalizeIds($data["tags"] ?? []);
+    $errors = $this->validate($data);
 
     if ($errors) {
       return ["success" => false, "errors" => $errors];
@@ -98,22 +110,10 @@ class ArticleService
 
   public function update(int $id, array $data): array
   {
-    $errors = [];
-
     $data["categories"] = $this->normalizeIds($data["categories"] ?? []);
     $data["tags"] = $this->normalizeIds($data["tags"] ?? []);
 
-    if (empty($data["title"]) || empty($data["content"]) || empty($data["author_id"])) {
-      $errors[] = "Все поля обязательны";
-    }
-
-    if (empty($data["categories"])) {
-      $errors[] = "Нужно выбрать хотя бы одну категорию";
-    }
-
-    if (empty($data["tags"])) {
-      $errors[] = "Нужно выбрать хотя бы один тэг";
-    }
+    $errors = $this->validate($data);
 
     if ($errors) {
       return ["success" => false, "errors" => $errors];
