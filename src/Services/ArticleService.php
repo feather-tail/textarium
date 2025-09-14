@@ -4,106 +4,135 @@ declare(strict_types=1);
 namespace App\Services;
 
 use PDO;
+use PDOException;
 use App\Services\SlugService;
 use App\Services\CategoryService;
 use App\Services\TagService;
 
 class ArticleService
 {
-    private PDO $pdo;
-    private SlugService $slugService;
-    private CategoryService $categoryService;
-    private TagService $tagService;
+  private PDO $pdo;
+  private SlugService $slugService;
+  private CategoryService $categoryService;
+  private TagService $tagService;
 
-    public function __construct(PDO $pdo)
-    {
-        $this->pdo             = $pdo;
-        $this->slugService     = new SlugService($pdo);
-        $this->categoryService = new CategoryService($pdo);
-        $this->tagService      = new TagService($pdo);
+  public function __construct(PDO $pdo)
+  {
+    $this->pdo = $pdo;
+    $this->slugService = new SlugService($pdo);
+    $this->categoryService = new CategoryService($pdo);
+    $this->tagService = new TagService($pdo);
+  }
+
+  /**
+   * @param mixed $ids
+   * @return int[]
+   */
+  private function normalizeIds(mixed $ids): array
+  {
+    if (!is_array($ids)) {
+      $ids = [$ids];
     }
 
-    public function create(array $data): array
-    {
-        $errors = [];
+    $ids = array_map("intval", $ids);
+    $ids = array_filter($ids, static fn(int $id): bool => $id > 0);
 
-        if (
-            empty($data['title'])
-            || empty($data['content'])
-            || empty($data['author_id'])
-            || empty($data['categories']) || !is_array($data['categories'])
-        ) {
-            $errors[] = 'Все поля обязательны, включая выбор категории';
-        }
+    return array_values(array_unique($ids));
+  }
 
-        if (empty($data['tags']) || !is_array($data['tags'])) {
-            $errors[] = 'Нужно выбрать хотя бы один тэг';
-        }
+  public function create(array $data): array
+  {
+    $errors = [];
 
-        if ($errors) {
-            return ['success' => false, 'errors' => $errors];
-        }
+    $data["categories"] = $this->normalizeIds($data["categories"] ?? []);
+    $data["tags"] = $this->normalizeIds($data["tags"] ?? []);
 
-        $slug = $this->slugService->generate($data['title']);
+    if (empty($data["title"]) || empty($data["content"]) || empty($data["author_id"])) {
+      $errors[] = "Все поля обязательны";
+    }
 
-        $stmt = $this->pdo->prepare("
-            INSERT INTO articles 
+    if (empty($data["categories"])) {
+      $errors[] = "Нужно выбрать хотя бы одну категорию";
+    }
+
+    if (empty($data["tags"])) {
+      $errors[] = "Нужно выбрать хотя бы один тэг";
+    }
+
+    if ($errors) {
+      return ["success" => false, "errors" => $errors];
+    }
+
+    $slug = $this->slugService->generate($data["title"]);
+
+    try {
+      $this->pdo->beginTransaction();
+
+      $stmt = $this->pdo->prepare("
+            INSERT INTO articles
                 (title, slug, content, author_id, created_at, status)
-            VALUES 
+            VALUES
                 (?, ?, ?, ?, NOW(), ?)
         ");
-        $stmt->execute([
-            $data['title'],
-            $slug,
-            $data['content'],
-            $data['author_id'],
-            $data['status'] ?? 'draft',
-        ]);
+      $stmt->execute([
+        $data["title"],
+        $slug,
+        $data["content"],
+        $data["author_id"],
+        $data["status"] ?? "draft",
+      ]);
 
-        $articleId = (int)$this->pdo->lastInsertId();
+      $articleId = (int) $this->pdo->lastInsertId();
 
-        $this->categoryService->attach($articleId, $data['categories']);
-        $this->tagService->attach     ($articleId, $data['tags']);
+      $this->categoryService->attach($articleId, $data["categories"]);
+      $this->tagService->attach($articleId, $data["tags"]);
 
-        return ['success' => true, 'errors' => [], 'id' => $articleId];
+      $this->pdo->commit();
+    } catch (PDOException $e) {
+      $this->pdo->rollBack();
+      return ["success" => false, "errors" => ["Ошибка при создании статьи"]];
     }
 
-    public function update(int $id, array $data): array
-    {
-        $errors = [];
+    return ["success" => true, "errors" => [], "id" => $articleId];
+  }
 
-        if (
-            empty($data['title'])
-            || empty($data['content'])
-            || empty($data['author_id'])
-            || empty($data['categories']) || !is_array($data['categories'])
-        ) {
-            $errors[] = 'Все поля обязательны, включая выбор категории';
-        }
+  public function update(int $id, array $data): array
+  {
+    $errors = [];
 
-        if (empty($data['tags']) || !is_array($data['tags'])) {
-            $errors[] = 'Нужно выбрать хотя бы один тэг';
-        }
+    $data["categories"] = $this->normalizeIds($data["categories"] ?? []);
+    $data["tags"] = $this->normalizeIds($data["tags"] ?? []);
 
-        if ($errors) {
-            return ['success' => false, 'errors' => $errors];
-        }
+    if (empty($data["title"]) || empty($data["content"]) || empty($data["author_id"])) {
+      $errors[] = "Все поля обязательны";
+    }
 
-        $stmt = $this->pdo->prepare("SELECT title, slug FROM articles WHERE id = ?");
-        $stmt->execute([$id]);
-        $existing = $stmt->fetch();
-        if (!$existing) {
-            return ['success' => false, 'errors' => ['Статья не найдена']];
-        }
+    if (empty($data["categories"])) {
+      $errors[] = "Нужно выбрать хотя бы одну категорию";
+    }
 
-        $title = $data['title'];
-        $slug  = $this->slugService->generateOrReuse(
-            $title,
-            $existing['slug'],
-            $existing['title']
-        );
+    if (empty($data["tags"])) {
+      $errors[] = "Нужно выбрать хотя бы один тэг";
+    }
 
-        $stmt = $this->pdo->prepare("
+    if ($errors) {
+      return ["success" => false, "errors" => $errors];
+    }
+
+    $stmt = $this->pdo->prepare("SELECT title, slug FROM articles WHERE id = ?");
+    $stmt->execute([$id]);
+    $existing = $stmt->fetch();
+    if (!$existing) {
+      return ["success" => false, "errors" => ["Статья не найдена"]];
+    }
+
+    $title = $data["title"];
+    $slug = $this->slugService->generateOrReuse($title, $existing["slug"], $existing["title"]);
+
+    try {
+      $this->pdo->beginTransaction();
+
+      $stmt = $this->pdo->prepare("
             UPDATE articles SET
                 title      = ?,
                 slug       = ?,
@@ -113,18 +142,24 @@ class ArticleService
                 updated_at = NOW()
             WHERE id = ?
         ");
-        $stmt->execute([
-            $title,
-            $slug,
-            $data['content'],
-            $data['author_id'],
-            $data['status'] ?? 'draft',
-            $id
-        ]);
+      $stmt->execute([
+        $title,
+        $slug,
+        $data["content"],
+        $data["author_id"],
+        $data["status"] ?? "draft",
+        $id,
+      ]);
 
-        $this->categoryService->attach($id,           $data['categories']);
-        $this->tagService->attach     ($id,           $data['tags']);
+      $this->categoryService->attach($id, $data["categories"]);
+      $this->tagService->attach($id, $data["tags"]);
 
-        return ['success' => true, 'errors' => []];
+      $this->pdo->commit();
+    } catch (PDOException $e) {
+      $this->pdo->rollBack();
+      return ["success" => false, "errors" => ["Ошибка при обновлении статьи"]];
     }
+
+    return ["success" => true, "errors" => []];
+  }
 }
