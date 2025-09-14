@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Lib;
 
 use App\Lib\Db;
@@ -8,9 +10,9 @@ class Log
 {
   public static function write(
     string $action,
-    string $type = null,
-    int $id = null,
-    string $details = null,
+    ?string $type = null,
+    ?int $id = null,
+    ?string $details = null,
   ): void {
     $pdo = Db::getConnection();
 

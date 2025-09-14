@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Lib;
 
 class Csrf
@@ -50,13 +52,17 @@ class Csrf
           $originHost === $hostName &&
           (int) $originPort === (int) $hostPort &&
           $originScheme === $scheme;
-      } elseif ($referer) {
-        $isSameOrigin =
-        $refHost = parse_url($referer, PHP_URL_HOST);
-        $refScheme = parse_url($referer, PHP_URL_SCHEME);
-        $refPort = parse_url($referer, PHP_URL_PORT);
-        $refPort ??= ($refScheme === "https" ? 443 : 80);
-      } else {
+        } elseif ($referer) {
+          $refHost = parse_url($referer, PHP_URL_HOST);
+          $refScheme = parse_url($referer, PHP_URL_SCHEME);
+          $refPort = parse_url($referer, PHP_URL_PORT);
+          $refPort ??= ($refScheme === "https" ? 443 : 80);
+
+          $isSameOrigin =
+            $refHost === $hostName &&
+            (int) $refPort === (int) $hostPort &&
+            $refScheme === $scheme;
+        } else {
         error_log("[CSRF] Отсутствует Origin и Referer для POST-запроса");
         return false;
       }
