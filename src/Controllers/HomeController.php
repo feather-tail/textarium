@@ -54,12 +54,16 @@ class HomeController extends BaseController
       $perPage,
     );
 
+    if (isset($params["limit"])) {
+      $params["limit"] = (int) $params["limit"];
+    }
+    if (isset($params["offset"])) {
+      $params["offset"] = (int) $params["offset"];
+    }
+
     $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(":limit", $params["limit"], \PDO::PARAM_INT);
-    $stmt->bindValue(":offset", $params["offset"], \PDO::PARAM_INT);
-    unset($params["limit"], $params["offset"]);
     $stmt->execute($params);
-    $articles = $stmt->fetchAll();
+    $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     $articleIds = array_column($articles, "id");
     $categoriesByArticle = $categoryModel->getCategoriesForArticles($articleIds);
@@ -170,12 +174,17 @@ class HomeController extends BaseController
       $perPage,
     );
 
+    // Не используем отдельные bindValue — передаём все параметры разом
+    if (isset($params["limit"])) {
+      $params["limit"] = (int) $params["limit"];
+    }
+    if (isset($params["offset"])) {
+      $params["offset"] = (int) $params["offset"];
+    }
+
     $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(":limit", $params["limit"], \PDO::PARAM_INT);
-    $stmt->bindValue(":offset", $params["offset"], \PDO::PARAM_INT);
-    unset($params["limit"], $params["offset"]);
     $stmt->execute($params);
-    $articles = $stmt->fetchAll();
+    $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     $title = "Мои статьи";
     $tagModel = new TagModel($pdo);
@@ -211,12 +220,17 @@ class HomeController extends BaseController
       $perPage,
     );
 
+    // Не используем отдельные bindValue — передаём все параметры разом
+    if (isset($params["limit"])) {
+      $params["limit"] = (int) $params["limit"];
+    }
+    if (isset($params["offset"])) {
+      $params["offset"] = (int) $params["offset"];
+    }
+
     $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(":limit", $params["limit"], \PDO::PARAM_INT);
-    $stmt->bindValue(":offset", $params["offset"], \PDO::PARAM_INT);
-    unset($params["limit"], $params["offset"]);
     $stmt->execute($params);
-    $drafts = $stmt->fetchAll();
+    $drafts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     $title = "Мои черновики";
     $tagModel = new TagModel($pdo);
