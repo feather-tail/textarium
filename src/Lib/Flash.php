@@ -24,10 +24,16 @@ class Flash
     $_SESSION["flash"]["error"][] = $message;
   }
 
+  public static function info(string $message): void
+  {
+    self::ensureSession();
+    $_SESSION["flash"]["info"][] = $message;
+  }
+
   public static function getMessages(): array
   {
     self::ensureSession();
-    $messages = $_SESSION["flash"] ?? ["success" => [], "error" => []];
+    $messages = $_SESSION["flash"] ?? ["success" => [], "error" => [], "info" => []];
     unset($_SESSION["flash"]);
     return array_map(
       fn(array $group) => array_map(

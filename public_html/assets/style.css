@@ -2,7 +2,6 @@
    0. Системные переменные
    ===================================================================== */
 :root {
-  /* ----- Цвета ----- */
   --clr-bg: #f9fafb;
   --clr-bg-alt: #fff;
   --clr-text: #1e2024;
@@ -15,22 +14,19 @@
   --clr-success-text: #065f46;
   --clr-error-bg: #fee2e2;
   --clr-error-text: #7f1d1d;
-
-  /* ----- Шрифты и размеры ----- */
+  --clr-info-bg: #e0f2fe;
+  --clr-info-text: #075985;
   --ff-base: system-ui;
   --fs-xs: 0.7rem;
   --fs-sm: 0.875rem;
   --fs-md: 1rem;
   --fs-lg: 1.125rem;
   --fs-xl: 1.5rem;
-
-  /* ----- Прочее ----- */
   --radius: 6px;
   --gap: 1rem;
 }
 
-/* ─── Тёмная тема ──────────────────────────────────────────────────── */
-[data-theme='dark'] {
+[data-theme="dark"] {
   --clr-bg: #18181b;
   --clr-bg-alt: #1f1f22;
   --clr-text: #f3f4f6;
@@ -43,6 +39,8 @@
   --clr-success-text: #bbf7d0;
   --clr-error-bg: #7f1d1d;
   --clr-error-text: #fecaca;
+  --clr-info-bg: #075985;
+  --clr-info-text: #bae6fd;
 }
 
 /* =====================================================================
@@ -51,14 +49,18 @@
 html {
   box-sizing: border-box;
 }
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
-
 @media (prefers-reduced-motion: no-preference) {
   :where(a, button, input, select) {
-    transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+    transition:
+      color 0.2s,
+      background 0.2s,
+      box-shadow 0.2s;
   }
 }
 
@@ -67,7 +69,9 @@ body {
   font: var(--fs-md) / 1.5 var(--ff-base);
   background: var(--clr-bg);
   color: var(--clr-text);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .visually-hidden {
@@ -94,7 +98,7 @@ body {
   margin-block: 3rem;
 }
 
-input[type='checkbox'] {
+input[type="checkbox"] {
   accent-color: var(--clr-primary);
 }
 
@@ -102,7 +106,6 @@ input[type='checkbox'] {
        3. Компоненты: кнопки, теги, флеш-сообщения
        ===================================================================== */
 
-/* ----- Кнопки ------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -159,7 +162,6 @@ input[type='checkbox'] {
   padding: 0.5rem;
 }
 
-/* ----- Теги --------------------------------------------------------- */
 .tag {
   display: inline-block;
   padding: 0.15rem 0.6rem;
@@ -178,7 +180,9 @@ input[type='checkbox'] {
 .tag--link {
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.18s, color 0.18s;
+  transition:
+    background 0.18s,
+    color 0.18s;
 }
 .tag--link:hover {
   background: var(--clr-primary);
@@ -188,7 +192,6 @@ input[type='checkbox'] {
   background: var(--clr-primary-hover);
 }
 
-/* ----- Flash-сообщения --------------------------------------------- */
 .flash-container {
   position: fixed;
   top: 1rem;
@@ -219,6 +222,11 @@ input[type='checkbox'] {
   color: var(--clr-error-text);
 }
 
+.flash--info {
+  background: var(--clr-info-bg);
+  color: var(--clr-info-text);
+}
+
 .flash i {
   flex-shrink: 0;
   font-size: 1.125rem;
@@ -232,7 +240,6 @@ input[type='checkbox'] {
        4. Навигация (Admin / Profile / Global)  — размещена до theme-toggle
        ===================================================================== */
 
-/* --- Горизонтальные списки для admin- и profile-разделов ----------- */
 .admin-nav,
 .profile-nav {
   display: block;
@@ -281,7 +288,6 @@ input[type='checkbox'] {
   text-align: center;
 }
 
-/* --- Главное меню (global) ---------------------------------------- */
 .nav-global__list {
   display: flex;
   gap: 1rem;
@@ -291,7 +297,7 @@ input[type='checkbox'] {
 }
 
 li.nav-global__item {
-    padding-right: 24px;
+  padding-right: 24px;
 }
 
 .nav-global__link {
@@ -306,7 +312,7 @@ li.nav-global__item {
 }
 
 .nav-global__link::after {
-  content: '';
+  content: "";
   position: absolute;
   inset-inline: 0;
   bottom: -0.25rem;
@@ -348,19 +354,19 @@ li.nav-global__item {
 }
 
 .site-header__inner {
-    display: grid;
-    grid-template-columns: auto auto max-content;
-    gap: var(--gap);
-    align-items: center;
+  display: grid;
+  grid-template-columns: auto auto max-content;
+  gap: var(--gap);
+  align-items: center;
 }
 
 .user-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    font-size: var(--fs-sm);
-    white-space: nowrap;
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  justify-content: flex-end;
 }
 
 .user-bar__roles {
@@ -383,7 +389,7 @@ li.nav-global__item {
   transition: transform 0.3s ease-out;
 }
 
-[data-theme='dark'] .theme-toggle i {
+[data-theme="dark"] .theme-toggle i {
   transform: rotate(180deg);
 }
 
@@ -432,7 +438,9 @@ li.nav-global__item {
   border-radius: var(--radius);
   background: var(--clr-bg-alt);
   box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
-  transition: box-shadow 0.15s, transform 0.15s;
+  transition:
+    box-shadow 0.15s,
+    transform 0.15s;
   will-change: transform;
 }
 
@@ -489,7 +497,9 @@ li.nav-global__item {
   border: 0;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .article-action:hover {
@@ -541,11 +551,12 @@ li.nav-global__item {
   text-align: justify;
 }
 
-.article__content, .article-content, .bb-preview .article-content {
-    white-space: pre-wrap;
-    text-indent: 0;
+.article__content,
+.article-content,
+.bb-preview .article-content {
+  white-space: pre-wrap;
+  text-indent: 0;
 }
-
 
 .article__content .decoda-spoiler {
   margin: 1em 0;
@@ -641,22 +652,52 @@ li.nav-global__item {
 }
 
 .article__content h1,
-.bb-preview h1 { font-size: 2.2rem; font-weight: 800; margin: 1.5em 0 0.75em 0; line-height: 1.2; }
+.bb-preview h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 1.5em 0 0.75em 0;
+  line-height: 1.2;
+}
 
 .article__content h2,
-.bb-preview h2 { font-size: 1.65rem; font-weight: 700; margin: 1.3em 0 0.65em 0; line-height: 1.25; }
+.bb-preview h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin: 1.3em 0 0.65em 0;
+  line-height: 1.25;
+}
 
 .article__content h3,
-.bb-preview h3 { font-size: 1.28rem; font-weight: 600; margin: 1.1em 0 0.5em 0; line-height: 1.28; }
+.bb-preview h3 {
+  font-size: 1.28rem;
+  font-weight: 600;
+  margin: 1.1em 0 0.5em 0;
+  line-height: 1.28;
+}
 
 .article__content h4,
-.bb-preview h4 { font-size: 1.08rem; font-weight: 600; margin: 1em 0 0.4em 0; line-height: 1.32; }
+.bb-preview h4 {
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin: 1em 0 0.4em 0;
+  line-height: 1.32;
+}
 
 .article__content h5,
-.bb-preview h5 { font-size: 0.96rem; font-weight: 500; margin: 0.8em 0 0.3em 0; line-height: 1.35; }
+.bb-preview h5 {
+  font-size: 0.96rem;
+  font-weight: 500;
+  margin: 0.8em 0 0.3em 0;
+  line-height: 1.35;
+}
 
 .article__content h6,
-.bb-preview h6 { font-size: 0.86rem; font-weight: 500; margin: 0.7em 0 0.2em 0; line-height: 1.37; }
+.bb-preview h6 {
+  font-size: 0.86rem;
+  font-weight: 500;
+  margin: 0.7em 0 0.2em 0;
+  line-height: 1.37;
+}
 
 .article__content > *:first-child,
 .article__content > p:first-child {
@@ -673,7 +714,6 @@ li.nav-global__item {
   gap: var(--gap);
 }
 
-/* — сама панель — */
 .filters-panel {
   display: flex;
   flex-direction: column;
@@ -694,7 +734,6 @@ li.nav-global__item {
   letter-spacing: 0.03em;
 }
 
-/* — форма фильтров — */
 .filters-form {
   display: flex;
   flex-direction: column;
@@ -722,7 +761,6 @@ li.nav-global__item {
   outline: 0;
 }
 
-/* — checkbox группы — */
 .filter-group {
   border: 0;
   margin: 0;
@@ -764,7 +802,7 @@ li.nav-global__item {
 }
 
 .filter-checkbox input::before {
-  content: '';
+  content: "";
   width: 10px;
   height: 10px;
   background: var(--clr-primary);
@@ -787,7 +825,6 @@ li.nav-global__item {
   outline-offset: 2px;
 }
 
-/* — селект — */
 .filter-select {
   padding: 0.45rem 0.6rem;
   border: 1px solid var(--clr-border);
@@ -843,7 +880,7 @@ li.nav-global__item {
   grid-column: 1 / -1;
 }
 
-.article-form :where(input[type='text'], select, textarea) {
+.article-form :where(input[type="text"], select, textarea) {
   width: 100%;
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--clr-border);
@@ -852,7 +889,7 @@ li.nav-global__item {
   font: var(--fs-sm) / 1.4 var(--ff-base);
 }
 
-.article-form :where(input[type='text'], select, textarea):focus {
+.article-form :where(input[type="text"], select, textarea):focus {
   border-color: var(--clr-primary);
   outline: 0;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-primary) 25%, transparent);
@@ -925,7 +962,7 @@ li.nav-global__item {
   gap: 0.25rem;
 }
 
-.log-filters input[type='date'] {
+.log-filters input[type="date"] {
   flex: 0 0 auto;
   padding: 0.3rem 0.5rem;
   font-size: var(--fs-sm);
@@ -933,7 +970,7 @@ li.nav-global__item {
 }
 
 @supports (-webkit-touch-callout: none) {
-  .log-filters input[type='date'] {
+  .log-filters input[type="date"] {
     appearance: none;
     border-radius: var(--radius);
   }
@@ -942,7 +979,6 @@ li.nav-global__item {
 .log-filters button {
   align-self: flex-end;
 }
-
 
 /* =====================================================================
         14. USERS TABLE  (.admin-table--users)
@@ -989,7 +1025,6 @@ li.nav-global__item {
   color: var(--clr-success-text);
 }
 
-/* — смена пароля — */
 .password-form {
   max-width: 420px;
   display: grid;
@@ -1033,7 +1068,6 @@ li.nav-global__item {
   gap: 0.25rem;
 }
 
-/* — кнопка «Назад» — */
 .back-nav {
   margin-block-end: 1.25rem;
 }
@@ -1094,7 +1128,10 @@ li.nav-global__item {
   color: var(--clr-text);
   background: var(--clr-bg-alt);
   text-decoration: none;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .pagination__link:hover {
@@ -1156,13 +1193,12 @@ li.nav-global__item {
   }
 
   a::after {
-    content: ' (' attr(href) ')';
+    content: " (" attr(href) ")";
     font-size: 90%;
     word-break: break-all;
   }
 }
 
-/* Контейнер для уведомлений */
 .toast-container {
   position: fixed;
   top: 1rem;
@@ -1195,12 +1231,10 @@ li.nav-global__item {
 /* =====================================================================
      20. responsive design  (настройки адаптивного дизайна)
      ===================================================================== */
-
-/* для корректной работы фильтра при адаптиве */
 @media (min-width: 1024px) {
   .page-home {
     grid-template-columns: clamp(220px, 25%, 280px) 1fr;
-    grid-template-areas: 'sidebar main';
+    grid-template-areas: "sidebar main";
   }
 
   #filters-panel {
@@ -1233,8 +1267,7 @@ li.nav-global__item {
   .filters-toggle:hover {
     background: var(--clr-primary);
     color: #fff;
-    box-shadow: 0 2px 6px
-      color-mix(in srgb, var(--clr-primary) 40%, transparent);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--clr-primary) 40%, transparent);
   }
 
   .filters-panel {
@@ -1318,15 +1351,7 @@ li.nav-global__item {
   }
 }
 
-
-
-
-
-
-
 /* === Утилиты для блочной верстки админ-панели (Grid) === */
-
-/* Переменные для админ-сеток */
 :root {
   --admin-grid-gap: 1rem;
   --admin-cell-padding: 0.5rem;
@@ -1334,25 +1359,32 @@ li.nav-global__item {
   --admin-border-color: var(--clr-border, #ccc);
 }
 
-/* Контейнер сетки */
 .admin-grid {
   display: grid;
   grid-auto-rows: auto;
   gap: var(--admin-grid-gap);
-  /* По умолчанию — автоподбор колонок */
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }
 
-/* Варианты с фиксированным числом колонок */
-.admin-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
-.admin-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
-.admin-grid--cols-5 { grid-template-columns: repeat(5, 1fr); }
-.admin-grid--cols-6 { grid-template-columns: repeat(6, 1fr); }
-.admin-grid--cols-7 { grid-template-columns: repeat(7, 1fr); }
-.admin-grid--cols-8 { grid-template-columns: repeat(8, 1fr); }
-/* Добавьте другие по необходимости */
+.admin-grid--cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.admin-grid--cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.admin-grid--cols-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+.admin-grid--cols-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+.admin-grid--cols-7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+.admin-grid--cols-8 {
+  grid-template-columns: repeat(8, 1fr);
+}
 
-/* Заголовки колонок */
 .admin-grid__header {
   display: block;
   grid-column: span 1;
@@ -1362,12 +1394,10 @@ li.nav-global__item {
   text-align: center;
 }
 
-/* Одна «строка» данных */
 .admin-grid__row {
   display: contents;
 }
 
-/* Ячейка */
 .admin-grid__cell {
   padding: var(--admin-cell-padding);
   border-bottom: 1px solid var(--admin-border-color);
@@ -1379,7 +1409,6 @@ li.nav-global__item {
   background: color-mix(in srgb, var(--clr-primary) 8%, transparent);
 }
 
-/* Адаптив: на узких экранах перегруппировать в карточки */
 @media (max-width: 767.98px) {
   .admin-grid {
     grid-template-columns: 1fr;
@@ -1394,7 +1423,7 @@ li.nav-global__item {
     padding: var(--admin-cell-padding);
     border: none;
   }
-  /* Добавляем метку перед контентом ячейки */
+
   .admin-grid__cell[data-label]::before {
     content: attr(data-label) ": ";
     font-weight: bold;

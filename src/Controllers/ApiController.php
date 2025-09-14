@@ -7,6 +7,7 @@ use App\Lib\BbcodeParser;
 use App\Lib\Db;
 use App\Lib\ApiResponse;
 use App\Lib\Permissions;
+use App\Lib\Auth;
 
 class ApiController
 {
@@ -56,10 +57,29 @@ class ApiController
       return;
     }
 
+    $currentUser = Auth::currentUser();
     $pdo = Db::getConnection();
+
+    $stmt = $pdo->prepare("SELECT author_id FROM articles WHERE id = ?");
+    $stmt->execute([$id]);
+    $authorId = $stmt->fetchColumn();
+
+    if ($authorId === false) {
+      ApiResponse::error("Статья не найдена", 404);
+      return;
+    }
+
+    if (
+      !$currentUser ||
+      ((int) $authorId !== (int) $currentUser["id"] && !Permissions::userCan("admin_dashboard"))
+    ) {
+      ApiResponse::error("⛔ Доступ запрещён", 403);
+      return;
+    }
+
     $stmt = $pdo->prepare("
-            UPDATE articles 
-            SET content = ?, updated_at = NOW() 
+            UPDATE articles
+            SET content = ?, updated_at = NOW()
             WHERE id = ? AND status = 'draft'
         ");
     $stmt->execute([$content, $id]);
@@ -216,6 +236,8 @@ class ApiController
 
   public function users(): void
   {
+    $this->requireAdmin();
+
     if ($_SERVER["REQUEST_METHOD"] !== "GET") {
       ApiResponse::error("Метод не разрешён", 405);
       return;

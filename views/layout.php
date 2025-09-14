@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= $title ?? 'Библиотека Изгоев' ?></title>
+  <title><?= $title ?? "Библиотека" ?></title>
 
   <link rel="stylesheet" href="/assets/style.css">
   <link rel="stylesheet" href="/assets/editor.css">
@@ -19,9 +19,9 @@
   <header id="site-header" class="site-header" role="banner">
     <div class="site-header__inner container">
       <?php
-        $user = \App\Lib\Auth::currentUser();
-        $userRoles = $user['roles'] ?? [];
-        $isLoggedIn = \App\Lib\Auth::isLoggedIn();
+      $user = \App\Lib\Auth::currentUser();
+      $userRoles = $user["roles"] ?? [];
+      $isLoggedIn = \App\Lib\Auth::isLoggedIn();
       ?>
 
       <nav
@@ -30,7 +30,7 @@
         role="navigation"
         aria-label="Основное меню"
       >
-        <?php include __DIR__ . '/partials/nav_global.php'; ?>
+        <?php include __DIR__ . "/partials/nav_global.php"; ?>
       </nav>
 
       <nav
@@ -41,9 +41,9 @@
         <?php if ($isLoggedIn): ?>
           <div class="user-bar__info">
             <i class="fa-solid fa-user"></i>
-            <?= htmlspecialchars($user['username']) ?>
+            <?= htmlspecialchars($user["username"]) ?>
             <span class="user-bar__roles">
-              (<?= htmlspecialchars(implode(', ', $userRoles)) ?>)
+              (<?= htmlspecialchars(implode(", ", $userRoles)) ?>)
             </span>
           </div>
           <a href="/logout" class="btn btn--icon user-bar__action" title="Выйти">
@@ -73,13 +73,12 @@
     <div id="flash-container" class="flash-container" aria-live="polite">
       <?php foreach (\App\Lib\Flash::getMessages() as $type => $msgs): ?>
         <?php foreach ($msgs as $msg): ?>
-          <?php
-            $icon = match ($type) {
-              'success' => 'fa-circle-check',
-              'error'   => 'fa-circle-exclamation',
-              default   => 'fa-circle-info',
-            };
-          ?>
+          <?php $icon = match ($type) {
+            "success" => "fa-circle-check",
+            "error" => "fa-circle-exclamation",
+            "info" => "fa-circle-info",
+            default => "fa-circle-info",
+          }; ?>
           <div class="flash flash--<?= $type ?>" role="alert">
             <i class="fa-solid <?= $icon ?>"></i>
             <span class="flash__message"><?= htmlspecialchars($msg) ?></span>
@@ -89,13 +88,13 @@
     </div>
 
     <section id="page-content" class="page-content">
-      <?= $content ?? '' ?>
+      <?= $content ?? "" ?>
     </section>
   </main>
 
   <footer id="site-footer" class="site-footer">
     <div class="site-footer__inner container">
-      <p class="footer-copy">&copy; <?= date('Y') ?> Библиотека Изгоев</p>
+      <p class="footer-copy">&copy; <?= date("Y") ?> Библиотека</p>
     </div>
   </footer>
 
