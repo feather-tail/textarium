@@ -1,15 +1,15 @@
-<?php include __DIR__ . '/partials/back_button.php'; ?>
+<?php include __DIR__ . "/partials/back_button.php"; ?>
 
 <article id="page-article" class="full-article article">
 
-  <h2 class="article__title"><?= htmlspecialchars($article['title']) ?></h2>
+  <h2 class="article__title"><?= htmlspecialchars($article["title"]) ?></h2>
 
   <div class="article__meta">
     <span class="meta-label">
       <i class="fa-solid fa-calendar" aria-hidden="true"></i> Дата публикации:
     </span>
-    <time class="article__date" datetime="<?= htmlspecialchars($article['created_at']) ?>">
-      <?= htmlspecialchars($article['created_at']) ?>
+    <time class="article__date" datetime="<?= htmlspecialchars($article["created_at"]) ?>">
+      <?= htmlspecialchars($article["created_at"]) ?>
     </time>
   </div>
 
@@ -20,10 +20,10 @@
       </span>
       <?php foreach ($categories as $cat): ?>
         <a
-          href="/?category[]=<?= $cat['id'] ?>"
+          href="/?category[]=<?= $cat["id"] ?>"
           class="tag tag-category tag--link"
-          title="Показать статьи из категории «<?= htmlspecialchars($cat['name']) ?>»"
-        ><?= htmlspecialchars($cat['name']) ?></a>
+          title="Показать статьи из категории «<?= htmlspecialchars($cat["name"]) ?>»"
+        ><?= htmlspecialchars($cat["name"]) ?></a>
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
@@ -35,31 +35,38 @@
       </span>
       <?php foreach ($tags as $tag): ?>
         <a
-          href="/?tag[]=<?= $tag['id'] ?>"
+          href="/?tag[]=<?= $tag["id"] ?>"
           class="tag tag-hash tag--link"
-          title="Показать статьи с тегом «<?= htmlspecialchars($tag['name']) ?>»"
-        >#<?= htmlspecialchars($tag['name']) ?></a>
+          title="Показать статьи с тегом «<?= htmlspecialchars($tag["name"]) ?>»"
+        >#<?= htmlspecialchars($tag["name"]) ?></a>
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
 
-  <div class="article__content"><?= $article['content_html'] ?></div>
+  <?php
+  $allowedTags =
+    "<p><a><img><br><b><i><strong><em><ul><ol><li><blockquote><code><pre><h1><h2><h3><h4><h5><h6>";
+  $safeHtml = strip_tags($article["content_html"], $allowedTags);
+  ?>
+  <div class="article__content"><?= $safeHtml ?></div>
 
   <?php
-    $user = \App\Lib\Auth::currentUser();
-    $userRoles = $user['roles'] ?? [];
-    $isModerator = in_array('moderator', $userRoles, true);
-    $isAdmin = in_array('admin', $userRoles, true);
-    $isVerified = in_array('verified', $userRoles, true);
-    $isAuthor = isset($user['id']) && $user['id'] === $article['author_id'];
-    $canEditOwn = $isAuthor && ($isVerified || $isModerator || $isAdmin)
-        && in_array($article['status'], ['draft', 'pending'], true);
+  $user = \App\Lib\Auth::currentUser();
+  $userRoles = $user["roles"] ?? [];
+  $isModerator = in_array("moderator", $userRoles, true);
+  $isAdmin = in_array("admin", $userRoles, true);
+  $isVerified = in_array("verified", $userRoles, true);
+  $isAuthor = isset($user["id"]) && $user["id"] === $article["author_id"];
+  $canEditOwn =
+    $isAuthor &&
+    ($isVerified || $isModerator || $isAdmin) &&
+    in_array($article["status"], ["draft", "pending"], true);
 
-    $canEditAdmin = $isModerator || $isAdmin;
+  $canEditAdmin = $isModerator || $isAdmin;
   ?>
 
   <?php ob_start(); ?>
-    <form action="/article/<?= $article['id'] ?>/delete" method="POST" style="display:inline">
+    <form action="/article/<?= $article["id"] ?>/delete" method="POST" style="display:inline">
       <?= \App\Lib\Csrf::input() ?>
       <button type="submit" class="btn btn--icon btn--danger article__action" title="Удалить">
         <i class="fa-solid fa-trash"></i>
@@ -70,17 +77,21 @@
 
   <div class="article__actions">
     <?php if ($canEditOwn): ?>
-      <a href="/edit?id=<?= $article['id'] ?>" class="btn btn--icon article__action" title="Редактировать">
+      <a href="/edit?id=<?= $article[
+        "id"
+      ] ?>" class="btn btn--icon article__action" title="Редактировать">
         <i class="fa-solid fa-pen"></i>
         <span class="visually-hidden">Редактировать</span>
       </a>
       <?= $deleteForm ?>
     <?php elseif ($canEditAdmin): ?>
-      <a href="/admin/edit?id=<?= $article['id'] ?>" class="btn btn--icon article__action" title="Редактировать">
+      <a href="/admin/edit?id=<?= $article[
+        "id"
+      ] ?>" class="btn btn--icon article__action" title="Редактировать">
         <i class="fa-solid fa-pen"></i>
         <span class="visually-hidden">Редактировать</span>
       </a>
       <?= $deleteForm ?>
-    <?php endif ?>
+    <?php endif; ?>
   </div>
 </article>

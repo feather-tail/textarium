@@ -77,6 +77,10 @@ class ApiController
       ApiResponse::error("Метод не разрешён", 405);
     }
 
+    if (!\App\Lib\Csrf::check()) {
+      \App\Lib\Csrf::deny();
+    }
+
     if (!isset($_FILES["file"]) || $_FILES["file"]["error"] !== UPLOAD_ERR_OK) {
       ApiResponse::error("Файл не получен");
     }
