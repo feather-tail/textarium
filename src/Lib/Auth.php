@@ -51,6 +51,8 @@ class Auth
       "roles" => $roles,
     ];
 
+    $pdo->prepare("DELETE FROM login_attempts WHERE username = ?")->execute([$username]);
+
     return "success";
   }
 

@@ -14,6 +14,7 @@ class ApiController
   {
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
       ApiResponse::error("Метод не разрешён", 405);
+      return;
     }
 
     if (!\App\Lib\Csrf::check()) {
@@ -25,18 +26,21 @@ class ApiController
 
     if ($content === "") {
       ApiResponse::error("Поле content обязательно");
+      return;
     }
 
     $parser = new BbcodeParser();
     $html = $parser->toHtml($content);
 
     ApiResponse::success(["html" => '<div class="article-content">' . $html . "</div>"], "preview");
+    return;
   }
 
   public function autosave(): void
   {
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
       ApiResponse::error("Метод не разрешён", 405);
+      return;
     }
 
     if (!\App\Lib\Csrf::check()) {
@@ -49,6 +53,7 @@ class ApiController
 
     if ($id <= 0 || $content === "") {
       ApiResponse::error("Некорректные данные");
+      return;
     }
 
     $pdo = Db::getConnection();
@@ -60,6 +65,7 @@ class ApiController
     $stmt->execute([$content, $id]);
 
     ApiResponse::success(["message" => "Сохранено"], "autosave");
+    return;
   }
 
   public function uploadImage(): void
@@ -75,6 +81,7 @@ class ApiController
 
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
       ApiResponse::error("Метод не разрешён", 405);
+      return;
     }
 
     if (!\App\Lib\Csrf::check()) {
@@ -83,6 +90,7 @@ class ApiController
 
     if (!isset($_FILES["file"]) || $_FILES["file"]["error"] !== UPLOAD_ERR_OK) {
       ApiResponse::error("Файл не получен");
+      return;
     }
 
     $f = $_FILES["file"];
@@ -90,29 +98,34 @@ class ApiController
     $maxSize = 5 * 1024 * 1024;
     if ($f["size"] > $maxSize) {
       ApiResponse::error("Файл слишком большой (максимум 5MB)");
+      return;
     }
 
     $ext = strtolower(pathinfo($f["name"], PATHINFO_EXTENSION));
     $allowed = ["jpg", "jpeg", "png", "gif", "webp"];
     if (!in_array($ext, $allowed, true)) {
       ApiResponse::error("Недопустимый формат изображения");
+      return;
     }
 
     $imgInfo = @getimagesize($f["tmp_name"]);
     if ($imgInfo === false) {
       ApiResponse::error("Файл не является изображением");
+      return;
     }
 
     $maxWidth = 4096;
     $maxHeight = 4096;
     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
       ApiResponse::error("Изображение слишком большое (максимум 4096x4096 пикселей)");
+      return;
     }
 
     $finfo = new \finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->file($f["tmp_name"]);
     if (strpos($mime, "image/") !== 0) {
       ApiResponse::error("Файл не является изображением");
+      return;
     }
 
     $subdir = date("Y/m/d");
@@ -120,10 +133,12 @@ class ApiController
     $uploadDir = $baseDir . "/public_html/uploads/" . $subdir;
     if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true)) {
       ApiResponse::error("Не удалось создать каталог для загрузки");
+      return;
     }
 
     if (!is_writable($uploadDir)) {
       ApiResponse::error("Папка uploads недоступна для записи");
+      return;
     }
 
     $filename = bin2hex(random_bytes(8)) . "." . $ext;
@@ -131,12 +146,14 @@ class ApiController
 
     if (!move_uploaded_file($f["tmp_name"], $target)) {
       ApiResponse::error("Не удалось сохранить файл");
+      return;
     }
 
     @chmod($target, 0644);
 
     $url = "/uploads/" . $subdir . "/" . $filename;
     ApiResponse::success(["url" => $url]);
+    return;
   }
 
   private function requireAdmin(): void
@@ -201,6 +218,7 @@ class ApiController
   {
     if ($_SERVER["REQUEST_METHOD"] !== "GET") {
       ApiResponse::error("Метод не разрешён", 405);
+      return;
     }
 
     $q = trim((string) ($_GET["q"] ?? ""));
@@ -232,5 +250,6 @@ class ApiController
       ],
       "users",
     );
+    return;
   }
 }

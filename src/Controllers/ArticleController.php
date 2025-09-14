@@ -94,9 +94,13 @@ class ArticleController extends BaseController
     $isModerator = in_array("moderator", $userRoles, true);
     $isAdmin = in_array("admin", $userRoles, true);
 
-    if ($isModerator || $isAdmin) {
-    } elseif ($isOwner && \App\Lib\Permissions::userCan("edit_own_draft", $userRoles)) {
-    } else {
+    if (
+      !(
+        $isModerator ||
+        $isAdmin ||
+        ($isOwner && Permissions::userCan("edit_own_draft", $userRoles))
+      )
+    ) {
       http_response_code(403);
       echo "⛔ Нет доступа к статье";
       return;
