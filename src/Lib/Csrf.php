@@ -52,7 +52,7 @@ class Csrf
         $originHost = parse_url($origin, PHP_URL_HOST);
         $originScheme = parse_url($origin, PHP_URL_SCHEME);
         $originPort = parse_url($origin, PHP_URL_PORT);
-        $originPort ??= ($originScheme === "https" ? 443 : 80);
+        $originPort ??= $originScheme === "https" ? 443 : 80;
 
         $isSameOrigin =
           $originHost === $hostName &&
@@ -62,12 +62,10 @@ class Csrf
         $refHost = parse_url($referer, PHP_URL_HOST);
         $refScheme = parse_url($referer, PHP_URL_SCHEME);
         $refPort = parse_url($referer, PHP_URL_PORT);
-        $refPort ??= ($refScheme === "https" ? 443 : 80);
+        $refPort ??= $refScheme === "https" ? 443 : 80;
 
         $isSameOrigin =
-          $refHost === $hostName &&
-          (int) $refPort === (int) $hostPort &&
-          $refScheme === $scheme;
+          $refHost === $hostName && (int) $refPort === (int) $hostPort && $refScheme === $scheme;
       }
 
       if (!$isSameOrigin) {
@@ -84,5 +82,10 @@ class Csrf
     http_response_code(403);
     echo "<h1>⛔ CSRF-проверка не пройдена</h1>";
     exit();
+  }
+
+  public static function denyApi(): void
+  {
+    ApiResponse::error("CSRF token invalid", 403);
   }
 }

@@ -19,7 +19,7 @@ class ApiController
     }
 
     if (!\App\Lib\Csrf::check()) {
-      \App\Lib\Csrf::deny();
+      \App\Lib\Csrf::denyApi();
     }
 
     $input = json_decode(file_get_contents("php://input"), true);
@@ -45,7 +45,7 @@ class ApiController
     }
 
     if (!\App\Lib\Csrf::check()) {
-      \App\Lib\Csrf::deny();
+      \App\Lib\Csrf::denyApi();
     }
 
     $data = json_decode(file_get_contents("php://input"), true);
@@ -105,7 +105,7 @@ class ApiController
     }
 
     if (!\App\Lib\Csrf::check()) {
-      \App\Lib\Csrf::deny();
+      \App\Lib\Csrf::denyApi();
     }
 
     if (!isset($_FILES["file"]) || $_FILES["file"]["error"] !== UPLOAD_ERR_OK) {

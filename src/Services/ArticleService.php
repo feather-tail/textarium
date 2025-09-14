@@ -53,6 +53,19 @@ class ArticleService
     if (empty($data["title"]) || empty($data["content"]) || empty($data["author_id"])) {
       $errors[] = "Все поля обязательны";
     }
+    if (!empty($data["title"])) {
+      $titleLength = mb_strlen($data["title"]);
+      if ($titleLength < 3) {
+        $errors[] = "Заголовок должен содержать не менее 3 символов";
+      }
+      if ($titleLength > 255) {
+        $errors[] = "Заголовок не должен превышать 255 символов";
+      }
+    }
+
+    if (!empty($data["content"]) && mb_strlen($data["content"]) > 20000) {
+      $errors[] = "Содержимое не должно превышать 20000 символов";
+    }
 
     if (empty($data["categories"])) {
       $errors[] = "Нужно выбрать хотя бы одну категорию";
