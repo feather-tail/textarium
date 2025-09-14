@@ -74,7 +74,12 @@ class ArticleController extends BaseController
             return;
         }
 
-        extract($ctx);
+        $article = $ctx['article'];
+        $tags = $ctx['tags'];
+        $categories = $ctx['categories'];
+        $users = $ctx['users'];
+        $selectedTags = $ctx['selectedTags'];
+        $selectedCategories = $ctx['selectedCategories'];
 
         $currentUser = \App\Lib\Auth::currentUser();
         $userRoles = $currentUser['roles'] ?? [];

@@ -30,15 +30,21 @@ class Csrf
     $validToken = isset($_SESSION["csrf_token"]) && hash_equals($_SESSION["csrf_token"], $token);
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-     $hostHeader = $_SERVER["HTTP_HOST"] ?? "";
+      $hostHeader = $_SERVER["HTTP_HOST"] ?? "";
       $origin = $_SERVER["HTTP_ORIGIN"] ?? "";
       $scheme =
         $_SERVER["REQUEST_SCHEME"] ??
         (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off" ? "https" : "http");
       $referer = $_SERVER["HTTP_REFERER"] ?? "";
 
-            [$hostName, $hostPort] = array_pad(explode(":", $hostHeader, 2), 2, null);
-      $hostPort = $hostPort !== null ? (int) $hostPort : (int) ($_SERVER["SERVER_PORT"] ?? ($scheme === "https" ? 443 : 80));
+      $hostName = parse_url("//{$hostHeader}", PHP_URL_HOST);
+      $hostPort = parse_url("//{$hostHeader}", PHP_URL_PORT);
+      $hostPort ??= (int) ($_SERVER["SERVER_PORT"] ?? ($scheme === "https" ? 443 : 80));
+
+      if (!$origin && !$referer) {
+        error_log("[CSRF] Отсутствует Origin и Referer для POST-запроса");
+        return false;
+      }
 
       $isSameOrigin = false;
 
@@ -52,19 +58,16 @@ class Csrf
           $originHost === $hostName &&
           (int) $originPort === (int) $hostPort &&
           $originScheme === $scheme;
-        } elseif ($referer) {
-          $refHost = parse_url($referer, PHP_URL_HOST);
-          $refScheme = parse_url($referer, PHP_URL_SCHEME);
-          $refPort = parse_url($referer, PHP_URL_PORT);
-          $refPort ??= ($refScheme === "https" ? 443 : 80);
+      } else {
+        $refHost = parse_url($referer, PHP_URL_HOST);
+        $refScheme = parse_url($referer, PHP_URL_SCHEME);
+        $refPort = parse_url($referer, PHP_URL_PORT);
+        $refPort ??= ($refScheme === "https" ? 443 : 80);
 
-          $isSameOrigin =
-            $refHost === $hostName &&
-            (int) $refPort === (int) $hostPort &&
-            $refScheme === $scheme;
-        } else {
-        error_log("[CSRF] Отсутствует Origin и Referer для POST-запроса");
-        return false;
+        $isSameOrigin =
+          $refHost === $hostName &&
+          (int) $refPort === (int) $hostPort &&
+          $refScheme === $scheme;
       }
 
       if (!$isSameOrigin) {

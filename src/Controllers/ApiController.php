@@ -8,10 +8,6 @@ use App\Lib\Db;
 use App\Lib\ApiResponse;
 use App\Lib\Permissions;
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
-
 class ApiController
 {
     public function preview(): void
@@ -71,12 +67,6 @@ class ApiController
 
     public function uploadImage(): void
     {
-        ini_set('display_errors', '1');
-        ini_set('display_startup_errors', '1');
-        error_reporting(E_ALL);
-
-        file_put_contents(__DIR__ . '/../../debug_upload.log', print_r($_FILES, true), FILE_APPEND);
-
         if (!Permissions::userCan('upload_image')) {
             http_response_code(403);
             header('Content-Type: application/json');

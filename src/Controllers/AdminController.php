@@ -404,7 +404,12 @@ class AdminController extends BaseController
             return;
         }
 
-        extract($ctx);
+        $article = $ctx['article'];
+        $tags = $ctx['tags'];
+        $categories = $ctx['categories'];
+        $users = $ctx['users'];
+        $selectedTags = $ctx['selectedTags'];
+        $selectedCategories = $ctx['selectedCategories'];
 
         $categoryModel = new \App\Models\CategoryModel($pdo);
         $tagModel = new \App\Models\TagModel($pdo);
